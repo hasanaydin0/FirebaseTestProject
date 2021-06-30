@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,6 +22,12 @@ class FeedActivity : AppCompatActivity() {
 
     private lateinit var db : FirebaseFirestore
 
+    var adapter : FeedRecyclerAdapter? = null
+
+    var userEmailFromFB : ArrayList<String> = ArrayList()
+    var userCommentFromFB : ArrayList<String> = ArrayList()
+    var userImageFromFB : ArrayList<String> = ArrayList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFeedBinding.inflate(layoutInflater)
@@ -31,6 +39,14 @@ class FeedActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
 
         getDataFromFirestore()
+
+        // RecyclerView
+
+        val layoutManager = LinearLayoutManager(this )
+        binding.recyclerView.layoutManager = layoutManager
+
+        adapter = FeedRecyclerAdapter(userEmailFromFB,userCommentFromFB,userImageFromFB)
+        binding.recyclerView.adapter = adapter
 
     }
 
@@ -77,6 +93,10 @@ class FeedActivity : AppCompatActivity() {
                 if (snapshot != null){
                     if (!snapshot.isEmpty){
 
+                        userImageFromFB.clear()
+                        userCommentFromFB.clear()
+                        userEmailFromFB.clear()
+
                         val documents = snapshot.documents
 
                         for (document in documents){
@@ -86,10 +106,11 @@ class FeedActivity : AppCompatActivity() {
                             val timestamp = document.get("date") as Timestamp
                             val date = timestamp.toDate()
 
-                            println(comment)
-                            println(useremail)
-                            println(downloadUrl)
-                            println(date)
+                            userEmailFromFB.add(useremail)
+                            userCommentFromFB.add(comment)
+                            userImageFromFB.add(downloadUrl)
+
+                            adapter!!.notifyDataSetChanged()
 
                         }
 
