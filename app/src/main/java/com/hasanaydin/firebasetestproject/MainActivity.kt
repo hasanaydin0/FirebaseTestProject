@@ -24,9 +24,34 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
+    // USER LOGIN
+
     fun signInClicked(view : View){
 
+        val email = binding.userEmailText.text.toString()
+        val password = binding.passwordText.text.toString()
+
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+
+            if (task.isSuccessful){
+
+                val intent = Intent(applicationContext,FeedActivity::class.java)
+                startActivity(intent)
+                finish()
+
+                Toast.makeText(applicationContext, "Welcome ${auth.currentUser?.email.toString()}", Toast.LENGTH_LONG).show()
+
+            }
+
+        }.addOnFailureListener { exception ->
+            Toast.makeText(applicationContext, exception.localizedMessage.toString(), Toast.LENGTH_LONG).show()
+        }
+
     }
+
+
+    // USER CREATION
 
     fun signUpClicked(view : View){
 
