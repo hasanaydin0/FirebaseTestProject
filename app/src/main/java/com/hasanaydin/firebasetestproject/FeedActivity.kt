@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.hasanaydin.firebasetestproject.databinding.ActivityFeedBinding
 
 class FeedActivity : AppCompatActivity() {
@@ -85,7 +86,7 @@ class FeedActivity : AppCompatActivity() {
 
     fun getDataFromFirestore(){
 
-        db.collection("Posts").addSnapshotListener { snapshot, exception ->
+        db.collection("Posts").orderBy("date",Query.Direction.DESCENDING).addSnapshotListener { snapshot, exception ->
             if (exception != null){
                 Toast.makeText(applicationContext, exception.localizedMessage.toString(), Toast.LENGTH_LONG).show()
             }else{
